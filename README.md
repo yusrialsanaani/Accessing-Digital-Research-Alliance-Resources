@@ -1,5 +1,17 @@
 # Accessing-Digital-Research-Alliance-Resources
+### Introduction to Accessing Digital Research Alliance Resources
 
+In this guide, we’ll walk through three different ways to connect to the **Digital Research Alliance of Canada’s clusters**. Depending on how you like to work—whether you're a fan of the command line, prefer a visual interface, or love using Jupyter notebooks—there's a method here that will fit right into your workflow.
+
+We’ll cover three key methods:
+
+1. **Access via Terminal (SSH)**: This is perfect if you’re comfortable with the command line. It gives you the most control over jobs, file management, and resource allocation. You'll be able to run scripts, manage batch jobs, and explore the cluster directly from your terminal.
+
+2. **Access via Visual Studio Code (VS Code)**: If you like working in a graphical environment, VS Code is a great option. With the **Remote - SSH** extension, you can easily connect to the cluster, edit and run your code, and even debug programs all within the VS Code interface. It’s a full development environment that makes working on the cluster feel just like working on your local machine.
+
+3. **Access via Jupyter Notebooks**: If your work is more interactive—like data analysis, machine learning experiments, or visualization—Jupyter notebooks are a fantastic way to run code on the cluster. You can either use **JupyterHub**, which manages the session for you, or set up a Jupyter notebook manually on a compute node for more control.
+
+Each method has its strengths, and this guide will help you figure out which one works best for you. Whether you’re managing large-scale computations or just testing small pieces of code, we’ll help you get up and running on the Alliance’s powerful resources. Let's dive in!
 
 ### **1- Accessing Digital Research Alliance Resources via SSH**
 
