@@ -437,6 +437,208 @@ Let’s go through a quick example of running a simple Python script on the clus
 
 ---
 
-This complete guide integrates file uploads with **Globus**, cluster access using **Visual Studio Code**, and submitting jobs on the Digital Research Alliance clusters. With these steps, you can now transfer files, set up environments, submit jobs, and monitor your tasks with ease.
+### Using Jupyter Notebooks on the Cluster via Visual Studio Code
 
-Let me know if you'd like to explore any specific section further!
+In this section, we’ll focus on how to **set up Jupyter Notebooks on the cluster and access them via Visual Studio Code (VS Code)**. This allows you to combine the power of Jupyter notebooks with the remote computing resources of the cluster, all while using the familiar interface of VS Code.
+
+---
+
+### **Step 1: Install the Jupyter Extension in VS Code**
+
+To work with Jupyter notebooks inside VS Code, you need to install the **Jupyter extension**:
+
+1. **Install the Jupyter Extension**:
+   - Open **Visual Studio Code**.
+   - Go to the **Extensions** view by clicking on the **Extensions** icon in the sidebar (or press `Ctrl+Shift+X`).
+   - Search for the **Jupyter** extension (by Microsoft) and click **Install**.
+
+This extension provides rich support for running Jupyter notebooks directly within VS Code.
+
+---
+
+### **Step 2: Set Up Jupyter on the Cluster**
+
+Before using Jupyter Notebooks on the cluster via VS Code, you need to set up Jupyter on the cluster itself. This can be done either by running Jupyter Notebooks in a compute node or using **JupyterHub** if available on the cluster.
+
+#### **Option 1: Running Jupyter Notebook on a Compute Node**
+
+1. **SSH into the Cluster**:
+   - Connect to the cluster using **SSH** (as explained in previous sections).
+
+2. **Load the Python Module**:
+   - Load the Python environment on the cluster:
+     ```bash
+     module load python/3.8
+     ```
+
+3. **Create a Virtual Environment (Optional but recommended)**:
+   - Create and activate a virtual environment:
+     ```bash
+     python -m venv jupyter_venv
+     source jupyter_venv/bin/activate
+     ```
+
+4. **Install Jupyter**:
+   - If Jupyter is not already installed on the cluster, install it in your virtual environment:
+     ```bash
+     pip install jupyter
+     ```
+
+5. **Start Jupyter Notebook**:
+   - Run Jupyter Notebook on the cluster but without opening a browser:
+     ```bash
+     jupyter notebook --no-browser --port=8888
+     ```
+   - The output will show a URL containing a token, similar to:
+     ```bash
+     http://localhost:8888/?token=<your_token>
+     ```
+
+6. **Forward the Port to Your Local Machine**:
+   - To access the notebook running on the cluster from your local machine, you need to set up SSH port forwarding.
+   - Open a new terminal on your local machine and run the following command to forward port 8888:
+     ```bash
+     ssh -N -L 8888:localhost:8888 ysanaani@beluga.alliancecan.ca
+     ```
+   - Now, the notebook running on the remote cluster is accessible locally at `http://localhost:8888`.
+
+#### **Option 2: Using JupyterHub on the Cluster**
+
+Some clusters (such as **Béluga**, **Cedar**, **Narval**) provide access to **JupyterHub**, which allows you to run Jupyter notebooks through a web interface without manually setting up the notebook server.
+
+1. **Access JupyterHub**:
+   - Open your browser and navigate to the JupyterHub URL for the cluster:
+     - For **Béluga**: `https://jupyterhub.beluga.alliancecan.ca`
+     - For **Cedar**: `https://jupyterhub.cedar.computecanada.ca`
+   - Log in with your Alliance credentials.
+
+2. **Start a Notebook Session**:
+   - After logging in, you can start a new notebook session by selecting the appropriate number of resources (CPUs, memory, etc.) for your task.
+   - Once the notebook server is started, you’ll be provided with a web interface where you can create and work with notebooks.
+
+---
+
+### **Step 3: Connect VS Code to the Jupyter Notebook on the Cluster**
+
+Once Jupyter is running on the cluster, you can connect to it from VS Code.
+
+1. **Open Jupyter Server in VS Code**:
+   - In VS Code, open the **Command Palette** by pressing `Ctrl+Shift+P`.
+   - Search for **Jupyter: Specify Jupyter Server for Connections** and select it.
+   
+2. **Select Remote Jupyter Server**:
+   - Choose the option **Existing: Specify the URI of an existing server**.
+   - Enter the URL for the Jupyter server you started on the cluster (e.g., `http://localhost:8888/?token=<your_token>`).
+
+3. **Open or Create a New Jupyter Notebook**:
+   - Now, open an existing `.ipynb` file or create a new Jupyter notebook by selecting **Jupyter: Create New Jupyter Notebook** from the Command Palette.
+   - You should now be connected to the remote Jupyter server running on the cluster, and you can execute code cells as usual.
+
+---
+
+### **Step 4: Running Notebooks and Selecting Kernels**
+
+1. **Run Code Cells**:
+   - Once the notebook is open, you can run code cells just like in a standard Jupyter notebook. VS Code provides the same interface with execution, variable exploration, and code output.
+
+2. **Select the Right Kernel**:
+   - In the top-right corner of the notebook, click the **kernel picker**.
+   - You can select the appropriate Python environment running on the cluster (for example, the one in your virtual environment).
+
+3. **Save and Load Notebooks**:
+   - Changes to the notebook are automatically saved to the remote server. You can also manually save notebooks as usual by clicking the **Save** button.
+
+---
+
+### **Step 5: Using Jupyter Notebooks Efficiently on the Cluster**
+
+#### **Running Short Interactive Jobs**:
+- **Jupyter Notebooks** are great for running short and interactive tasks. However, if your task requires extensive computation, you should avoid running it on the login nodes or within the notebook. Instead, submit the task as a batch job.
+
+#### **Submitting Long-Running Jobs**:
+- For long-running jobs or jobs that require large amounts of resources, it’s better to submit them using a batch job script through **SLURM** (as shown in the previous section).
+
+---
+
+### **Summary**
+
+Here’s what you need to do to work with Jupyter Notebooks on the Digital Research Alliance clusters via **Visual Studio Code**:
+1. **Install the Jupyter Extension** in VS Code.
+2. **Set up Jupyter** on the cluster, either manually or through **JupyterHub**.
+3. **Forward ports** using SSH if running Jupyter manually on a compute node.
+4. **Connect to the Jupyter Server** from VS Code using the **Jupyter: Specify Jupyter Server for Connections** command.
+5. **Run notebooks and manage kernels** directly within VS Code for a smooth workflow.
+
+You're right to ask about this, as it depends on how you use Jupyter on the cluster. Let's clarify:
+
+### **Two Scenarios for Running Jupyter on the Cluster**
+
+1. **Using JupyterHub on the Cluster**:
+   - When you use **JupyterHub**, it already allocates resources (e.g., CPUs, memory, etc.) for you via the cluster's scheduler (SLURM) when you start a notebook session. 
+   - **No job script is needed** because JupyterHub manages resource allocation for your session.
+   - The session runs in an isolated environment, and you don’t need to manually submit jobs.
+
+2. **Running Jupyter Notebook Manually on a Compute Node**:
+   - If you're running **Jupyter Notebook** manually on a compute node (without JupyterHub), it's recommended to submit a job script to allocate resources for the notebook server.
+   - In this case, **you should submit a job** to start the notebook on a compute node, especially for long-running or resource-intensive tasks.
+
+---
+
+### **Submitting a Job for Jupyter Notebook on a Compute Node**
+
+If you are running Jupyter manually and want to submit it as a job, here’s how you can do it:
+
+#### **1. Create a SLURM Job Script to Run Jupyter Notebook**
+
+Create a job script to request resources for Jupyter. For example, save the following as `jupyter_job.sh`:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=jupyter_notebook
+#SBATCH --output=jupyter_output.txt
+#SBATCH --error=jupyter_error.txt
+#SBATCH --time=03:00:00           # Maximum runtime (3 hours)
+#SBATCH --cpus-per-task=4         # Number of CPU cores
+#SBATCH --mem=16G                 # Memory request (16 GB)
+#SBATCH --gres=gpu:1              # If you need a GPU (optional)
+
+module load python/3.8            # Load Python module
+source ~/my_project/my_venv/bin/activate  # Activate your virtual environment
+
+# Start Jupyter Notebook on a specific port (8888) without opening a browser
+jupyter notebook --no-browser --port=8888 --ip=0.0.0.0
+```
+
+#### **2. Submit the Job to the Scheduler**
+
+Submit the job script to run Jupyter on a compute node:
+
+```bash
+sbatch jupyter_job.sh
+```
+
+#### **3. Forward the Port to Your Local Machine**
+
+Once the job starts, you’ll need to forward the port from the cluster to your local machine using SSH:
+
+```bash
+ssh -N -L 8888:localhost:8888 ysanaani@beluga.alliancecan.ca
+```
+
+#### **4. Connect to Jupyter**
+
+Now you can open a browser on your local machine and navigate to:
+
+```
+http://localhost:8888
+```
+
+Enter the token provided when Jupyter Notebook starts (you’ll see it in the `jupyter_output.txt` or the terminal where Jupyter was started).
+
+---
+
+### **When Should You Submit a Job Script for Jupyter?**
+- **Yes**: If you're running Jupyter **manually** on the cluster and expect your notebook to use significant resources (e.g., long-running tasks, large datasets, GPUs).
+- **No**: If you're using **JupyterHub** provided by the cluster, **you don't need to submit a job script**, as JupyterHub already manages resources for your notebook sessions.
+
+
