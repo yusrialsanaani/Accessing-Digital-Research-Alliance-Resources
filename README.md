@@ -1,7 +1,7 @@
 # Accessing-Digital-Research-Alliance-Resources
 
 
-### Full Step-by-Step Tutorial: **Accessing Digital Research Alliance Resources via SSH**
+### **1 Accessing Digital Research Alliance Resources via SSH**
 
 In this detailed guide, I will walk you through **setting up and using SSH access** to connect to the Digital Research Alliance of Canada’s compute resources. These steps cover everything from generating your SSH key to logging into the clusters. 
 
