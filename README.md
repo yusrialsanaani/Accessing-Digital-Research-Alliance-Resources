@@ -92,7 +92,7 @@ You can configure the SSH client to simplify connections to the Alliance cluster
      nano ~/.ssh/config
      ```
      or
-          ```bash
+     ```bash
      notepad $HOME\.ssh\config
      ```
 2. **Add Configuration for the Alliance Clusters**:
