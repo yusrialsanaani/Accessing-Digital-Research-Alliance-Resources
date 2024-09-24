@@ -1,17 +1,17 @@
 # Accessing-Digital-Research-Alliance-Resources
 ### Introduction to Accessing Digital Research Alliance Resources
 
-In this guide, we’ll walk through three different ways to connect to the **Digital Research Alliance of Canada’s clusters**. Depending on how you like to work—whether you're a fan of the command line, prefer a visual interface, or love using Jupyter notebooks—there's a method here that will fit right into your workflow.
+In this guide, we will walk through three different ways to connect to the **Digital Research Alliance of Canada’s clusters**.
 
-We’ll cover three key methods:
+We will cover three key methods:
 
-1. **Access via Terminal (SSH)**: This is perfect if you’re comfortable with the command line. It gives you the most control over jobs, file management, and resource allocation. You'll be able to run scripts, manage batch jobs, and explore the cluster directly from your terminal.
+1. **Access via Terminal (SSH)**: It gives the most control over jobs, file management, and resource allocation, allowing to run scripts, manage batch jobs, and explore the cluster directly from the terminal.
 
-2. **Access via Visual Studio Code (VS Code)**: If you like working in a graphical environment, VS Code is a great option. With the **Remote - SSH** extension, you can easily connect to the cluster, edit and run your code, and even debug programs all within the VS Code interface. It’s a full development environment that makes working on the cluster feel just like working on your local machine.
+2. **Access via Visual Studio Code (VS Code)**: VS Code is a great option for a graphical environment. With the **Remote - SSH** extension, we can easily connect to the cluster, edit and run code, and even debug programs all within the VS Code interface. It is a full development environment that makes working on the cluster feel just like working on the local machine.
 
-3. **Access via Jupyter Notebooks**: If your work is more interactive—like data analysis, machine learning experiments, or visualization—Jupyter notebooks are a fantastic way to run code on the cluster. You can either use **JupyterHub**, which manages the session for you, or set up a Jupyter notebook manually on a compute node for more control.
+3. **Access via Jupyter Notebooks**: If the work is more interactive—like data analysis, machine learning experiments, or visualization—Jupyter notebooks are a fantastic way to run code on the cluster. You can either use **JupyterHub**, which manages the session for you, or set up a Jupyter notebook manually on a compute node for more control.
 
-Each method has its strengths, and this guide will help you figure out which one works best for you. Whether you’re managing large-scale computations or just testing small pieces of code, we’ll help you get up and running on the Alliance’s powerful resources. Let's dive in!
+Each method has its strengths, and this guide will help you figure out which one works best for you. Whether you are managing large-scale computations or just testing small pieces of code, this tutorial well help you get up and running on the Alliance’s powerful resources. Let's dive in!
 
 ### **1- Accessing Digital Research Alliance Resources via SSH**
 
@@ -24,21 +24,20 @@ SSH keys are a way to securely connect to remote systems without needing to repe
    - On Ubuntu/Linux: Open the terminal directly.
    - On Windows: You can either use Git Bash or PowerShell (for native SSH support in Windows 10+).
    
-2. **Generate an SSH Key Pair**:
+2. **Generate an SSH Key Pair**: The recommended key type is ed25519 for better security and efficiency.
    - Use the following command to create a new SSH key pair:
      ```bash
-     ssh-keygen -t rsa -b 4096 -C "ysanaani@alliancecan.ca"
+     ssh-keygen -t ed25519 -C "your_email@example.com"
      ```
      Explanation:
-     - `-t rsa`: Specifies the RSA algorithm (secure and commonly used).
-     - `-b 4096`: Sets the key length to 4096 bits for stronger security.
-     - `-C`: Adds a label to your key to make it identifiable.
+     - `-t ed25519`: Specifies the RSA algorithm (secure and commonly used).
+     - `-C`: Adds a label to your key to make it identifiable. This can be your email or a custom label
 
-3. **Save the Key**:
-   - Press **Enter** to accept the default save location: `~/.ssh/id_rsa`.
+4. **Save the Key**:
+   - Press **Enter** to accept the default save location: `~/.ssh/id_ed25519`.
    - Optionally, you can provide a custom save location if you prefer.
 
-4. **Set a Passphrase**:
+5. **Set a Passphrase**:
    - You will be prompted to enter a passphrase for the key. It is recommended for extra security, though optional. You can leave it empty if you don’t want a passphrase.
 
 #### **Step 2: Add Your SSH Key to the SSH Agent**
@@ -57,7 +56,7 @@ After creating the SSH key, you need to add it to your local SSH agent to manage
 2. **Add the SSH Key**:
    - To add your private SSH key to the agent, run:
      ```bash
-     ssh-add ~/.ssh/id_rsa
+     ssh-add ~/.ssh/id_ed25519
      ```
 
 #### **Step 3: Add the SSH Key to Your Digital Research Alliance Account**
@@ -73,11 +72,11 @@ This step ensures that the cluster will recognize your SSH key when you attempt 
 3. **Copy Your Public SSH Key**:
    - Run the following command to display your public key:
      ```bash
-     cat ~/.ssh/id_rsa.pub
+     cat ~/.ssh/id_ed25519.pub
      ```
    - Copy the entire key, which should look like this:
      ```bash
-     ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCt... ysanaani@alliancecan.ca
+     ssh-ed25519 AAAAC3Nza... your_email@example.com
      ```
 
 4. **Paste the SSH Key into Your Account**:
@@ -92,28 +91,36 @@ You can configure the SSH client to simplify connections to the Alliance cluster
      ```bash
      nano ~/.ssh/config
      ```
-   - If the file doesn't exist, create it.
-
+     or
+          ```bash
+     notepad $HOME\.ssh\config
+     ```
 2. **Add Configuration for the Alliance Clusters**:
    - Add the following configuration for clusters like Béluga, Cedar, and Narval:
      ```
-     Host beluga
-       HostName beluga.alliancecan.ca
-       User ysanaani
-       IdentityFile ~/.ssh/id_rsa
-       ForwardX11 yes
+Host beluga
+  HostName beluga.computecanada.ca
+  User your_compute_canada_username    # Replace with your Compute Canada username
+  IdentityFile C:/Users/your_local_username/.ssh/id_ed25519  # Path to your local private SSH key
+  ForwardX11 yes
 
-     Host cedar
-       HostName cedar.alliancecan.ca
-       User ysanaani
-       IdentityFile ~/.ssh/id_rsa
-       ForwardX11 yes
+Host cedar
+  HostName cedar.computecanada.ca
+  User your_compute_canada_username    # Replace with your Compute Canada username
+  IdentityFile C:/Users/your_local_username/.ssh/id_ed25519  # Path to your local private SSH key
+  ForwardX11 yes
 
-     Host narval
-       HostName narval.alliancecan.ca
-       User ysanaani
-       IdentityFile ~/.ssh/id_rsa
-       ForwardX11 yes
+Host graham
+  HostName graham.computecanada.ca
+  User your_compute_canada_username    # Replace with your Compute Canada username
+  IdentityFile C:/Users/your_local_username/.ssh/id_ed25519  # Path to your local private SSH key
+  ForwardX11 yes
+
+Host narval
+  HostName narval.computecanada.ca
+  User your_compute_canada_username    # Replace with your Compute Canada username
+  IdentityFile C:/Users/your_local_username/.ssh/id_ed25519  # Path to your local private SSH key
+  ForwardX11 yes
      ```
    Explanation:
    - **Host**: The nickname for the server (e.g., Béluga, Cedar).
@@ -135,7 +142,7 @@ Now that everything is set up, you can connect to the clusters using the SSH com
      ```bash
      ssh beluga
      ```
-   - You’ll be logged into the cluster without needing to enter your password, as the SSH key is now being used.
+   - You’ll be logged into the cluster.
 
 3. **Check Available Resources**:
    - After connecting, you can check available resources or submit jobs:
