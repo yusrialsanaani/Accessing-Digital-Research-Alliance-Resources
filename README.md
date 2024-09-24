@@ -97,7 +97,7 @@ You can configure the SSH client to simplify connections to the Alliance cluster
      ```
 2. **Add Configuration for the Alliance Clusters**:
    - Add the following configuration for clusters like Béluga, Cedar, and Narval:
-     ```
+```
 Host beluga
   HostName beluga.computecanada.ca
   User your_compute_canada_username    # Replace with your Compute Canada username
@@ -121,7 +121,7 @@ Host narval
   User your_compute_canada_username    # Replace with your Compute Canada username
   IdentityFile C:/Users/your_local_username/.ssh/id_ed25519  # Path to your local private SSH key
   ForwardX11 yes
-     ```
+```
    Explanation:
    - **Host**: The nickname for the server (e.g., Béluga, Cedar).
    - **HostName**: The actual cluster hostname.
