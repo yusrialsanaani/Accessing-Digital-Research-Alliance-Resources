@@ -523,141 +523,197 @@ Before using Jupyter Notebooks on the cluster via VS Code, you need to set up Ju
 
 #### **Option 2: Using JupyterHub on the Cluster**
 
-Some clusters (such as **Béluga**, **Cedar**, **Narval**) provide access to **JupyterHub**, which allows you to run Jupyter notebooks through a web interface without manually setting up the notebook server.
-
-1. **Access JupyterHub**:
-   - Open your browser and navigate to the JupyterHub URL for the cluster:
-     - For **Béluga**: `https://jupyterhub.beluga.alliancecan.ca`
-     - For **Cedar**: `https://jupyterhub.cedar.computecanada.ca`
-   - Log in with your Alliance credentials.
-
-2. **Start a Notebook Session**:
-   - After logging in, you can start a new notebook session by selecting the appropriate number of resources (CPUs, memory, etc.) for your task.
-   - Once the notebook server is started, you’ll be provided with a web interface where you can create and work with notebooks.
+Here’s the updated, flexible tutorial using **Beluga** as the example cluster. It includes more detailed instructions for navigating directories, modifying files in the terminal, and creating SLURM job scripts. Additionally, I have ensured to avoid repeating certain steps like loading the environment and Python version within the job script.
 
 ---
 
-### **Step 3: Connect VS Code to the Jupyter Notebook on the Cluster**
+## **Using Jupyter Notebooks on Compute Canada Clusters: Beluga Example**
 
-Once Jupyter is running on the cluster, you can connect to it from VS Code.
-
-1. **Open Jupyter Server in VS Code**:
-   - In VS Code, open the **Command Palette** by pressing `Ctrl+Shift+P`.
-   - Search for **Jupyter: Specify Jupyter Server for Connections** and select it.
-   
-2. **Select Remote Jupyter Server**:
-   - Choose the option **Existing: Specify the URI of an existing server**.
-   - Enter the URL for the Jupyter server you started on the cluster (e.g., `http://localhost:8888/?token=<your_token>`).
-
-3. **Open or Create a New Jupyter Notebook**:
-   - Now, open an existing `.ipynb` file or create a new Jupyter notebook by selecting **Jupyter: Create New Jupyter Notebook** from the Command Palette.
-   - You should now be connected to the remote Jupyter server running on the cluster, and you can execute code cells as usual.
+This guide explains how to set up and run Jupyter Notebooks on **Compute Canada clusters**, focusing on Beluga as an example. It covers both how to handle resource-intensive tasks with SLURM and how to modify job scripts through terminal commands.
 
 ---
 
-### **Step 4: Running Notebooks and Selecting Kernels**
+### **Step 1: SSH into the Beluga Cluster**
 
-1. **Run Code Cells**:
-   - Once the notebook is open, you can run code cells just like in a standard Jupyter notebook. VS Code provides the same interface with execution, variable exploration, and code output.
-
-2. **Select the Right Kernel**:
-   - In the top-right corner of the notebook, click the **kernel picker**.
-   - You can select the appropriate Python environment running on the cluster (for example, the one in your virtual environment).
-
-3. **Save and Load Notebooks**:
-   - Changes to the notebook are automatically saved to the remote server. You can also manually save notebooks as usual by clicking the **Save** button.
-
----
-
-### **Step 5: Using Jupyter Notebooks Efficiently on the Cluster**
-
-#### **Running Short Interactive Jobs**:
-- **Jupyter Notebooks** are great for running short and interactive tasks. However, if your task requires extensive computation, you should avoid running it on the login nodes or within the notebook. Instead, submit the task as a batch job.
-
-#### **Submitting Long-Running Jobs**:
-- For long-running jobs or jobs that require large amounts of resources, it’s better to submit them using a batch job script through **SLURM** (as shown in the previous section).
-
----
-
-### **Summary**
-
-Here’s what you need to do to work with Jupyter Notebooks on the Digital Research Alliance clusters via **Visual Studio Code**:
-1. **Install the Jupyter Extension** in VS Code.
-2. **Set up Jupyter** on the cluster, either manually or through **JupyterHub**.
-3. **Forward ports** using SSH if running Jupyter manually on a compute node.
-4. **Connect to the Jupyter Server** from VS Code using the **Jupyter: Specify Jupyter Server for Connections** command.
-5. **Run notebooks and manage kernels** directly within VS Code for a smooth workflow.
-
-You're right to ask about this, as it depends on how you use Jupyter on the cluster. Let's clarify:
-
-### **Two Scenarios for Running Jupyter on the Cluster**
-
-1. **Using JupyterHub on the Cluster**:
-   - When you use **JupyterHub**, it already allocates resources (e.g., CPUs, memory, etc.) for you via the cluster's scheduler (SLURM) when you start a notebook session. 
-   - **No job script is needed** because JupyterHub manages resource allocation for your session.
-   - The session runs in an isolated environment, and you don’t need to manually submit jobs.
-
-2. **Running Jupyter Notebook Manually on a Compute Node**:
-   - If you're running **Jupyter Notebook** manually on a compute node (without JupyterHub), it's recommended to submit a job script to allocate resources for the notebook server.
-   - In this case, **you should submit a job** to start the notebook on a compute node, especially for long-running or resource-intensive tasks.
-
----
-
-### **Submitting a Job for Jupyter Notebook on a Compute Node**
-
-If you are running Jupyter manually and want to submit it as a job, here’s how you can do it:
-
-#### **1. Create a SLURM Job Script to Run Jupyter Notebook**
-
-Create a job script to request resources for Jupyter. For example, save the following as `jupyter_job.sh`:
+Start by connecting to the Beluga cluster:
 
 ```bash
-#!/bin/bash
-#SBATCH --job-name=jupyter_notebook
-#SBATCH --output=jupyter_output.txt
-#SBATCH --error=jupyter_error.txt
-#SBATCH --time=03:00:00           # Maximum runtime (3 hours)
-#SBATCH --cpus-per-task=4         # Number of CPU cores
-#SBATCH --mem=16G                 # Memory request (16 GB)
-#SBATCH --gres=gpu:1              # If you need a GPU (optional)
-
-module load python/3.8            # Load Python module
-source ~/my_project/my_venv/bin/activate  # Activate your virtual environment
-
-# Start Jupyter Notebook on a specific port (8888) without opening a browser
-jupyter notebook --no-browser --port=8888 --ip=0.0.0.0
+ssh your_username@beluga.alliancecan.ca
 ```
 
-#### **2. Submit the Job to the Scheduler**
+For example, if your username is `ysanaani`, you would run:
+```bash
+ssh ysanaani@beluga.alliancecan.ca
+```
 
-Submit the job script to run Jupyter on a compute node:
+This command will initiate an SSH connection to the Beluga cluster.
+
+---
+
+### **Step 2: Navigate to Your Project Directory**
+
+After logging in, navigate to your home directory or any subdirectory where your project files or notebooks are stored.
+
+For example, to navigate to your own home directory (adjust based on your actual directory structure):
+```bash
+cd /home/ysanaani
+```
+
+Once you're in your home directory, you can navigate further to the folder where your project is stored:
+```bash
+cd /home/ysanaani/my_project_directory
+```
+
+*Note:* Replace `ysanaani` with your actual username and `my_project_directory` with the correct directory name for your project. If you are unsure about the directory structure, use the command `ls` to list the contents of your current directory.
+
+---
+
+### **Step 3: Load the Python Module and Set Up Your Virtual Environment**
+
+Ensure that you have the required environment and Python version loaded:
+
+```bash
+module load StdEnv/2020
+module load python/3.8.10
+```
+
+If needed, activate the virtual environment:
+```bash
+source ~/my_project_directory/jupyter_venv/bin/activate
+```
+
+---
+
+### **Step 4: Create a SLURM Job Script for Jupyter Notebook**
+
+If you want to run Jupyter on a compute node (for resource-intensive tasks), you need to create and submit a SLURM job. Here’s how to create and edit your job script.
+
+1. **Create the SLURM Job Script**:
+   - Use the `nano` editor to create a job script file. Run:
+     ```bash
+     nano jupyter_job.sh
+     ```
+
+2. **Write the Job Script**:
+   - In the nano editor, type the following script to request resources and start Jupyter Notebook:
+
+     ```bash
+     #!/bin/bash
+     #SBATCH --job-name=jupyter_notebook     # Job name
+     #SBATCH --output=jupyter_output.txt     # Standard output log
+     #SBATCH --error=jupyter_error.txt       # Standard error log
+     #SBATCH --time=02:00:00                 # Set maximum runtime (adjust as needed)
+     #SBATCH --cpus-per-task=4               # Number of CPU cores
+     #SBATCH --mem=16G                       # Memory allocation
+     #SBATCH --gres=gpu:1                    # Optional, request GPU if needed
+
+     # Start Jupyter Notebook without opening a browser
+     jupyter notebook --no-browser --port=8888 --ip=0.0.0.0
+     ```
+
+   - **Save and Exit**:
+     - Press `Ctrl + O` to save the file.
+     - Press `Enter` to confirm the file name.
+     - Press `Ctrl + X` to exit the editor.
+
+3. **Reopen and Edit the Job Script**:
+   - If you need to make changes to the job script later, you can reopen it with:
+     ```bash
+     nano jupyter_job.sh
+     ```
+   - After making the necessary edits, save and exit as described earlier.
+
+4. **Make the Script Executable** (Optional):
+   - If you want to make the script executable, use the following command:
+     ```bash
+     chmod +x jupyter_job.sh
+     ```
+
+---
+
+### **Step 5: Submit the SLURM Job**
+
+Now that the job script is created, submit it to the SLURM scheduler:
 
 ```bash
 sbatch jupyter_job.sh
 ```
 
-#### **3. Forward the Port to Your Local Machine**
+This command will submit the job, and once the job starts, the output (including the URL and token for Jupyter) will be saved in `jupyter_output.txt`.
 
-Once the job starts, you’ll need to forward the port from the cluster to your local machine using SSH:
+---
+
+### **Step 6: Set Up SSH Port Forwarding**
+
+While your Jupyter Notebook is running on the cluster, set up SSH port forwarding so that you can access it from your local machine:
 
 ```bash
-ssh -N -L 8888:localhost:8888 ysanaani@beluga.alliancecan.ca
+ssh -N -L 8888:localhost:8888 your_username@beluga.alliancecan.ca
 ```
 
-#### **4. Connect to Jupyter**
+Leave this terminal open while Jupyter is running. This forwards port `8888` on the remote cluster to port `8888` on your local machine.
 
-Now you can open a browser on your local machine and navigate to:
+---
+
+### **Step 7: Access Jupyter Notebook on Your Local Machine**
+
+After the job starts and SSH port forwarding is set up, open your browser and go to:
 
 ```
 http://localhost:8888
 ```
 
-Enter the token provided when Jupyter Notebook starts (you’ll see it in the `jupyter_output.txt` or the terminal where Jupyter was started).
+Enter the token that was displayed when you started Jupyter Notebook (this will be in the `jupyter_output.txt` file or in the terminal output).
 
 ---
 
-### **When Should You Submit a Job Script for Jupyter?**
-- **Yes**: If you're running Jupyter **manually** on the cluster and expect your notebook to use significant resources (e.g., long-running tasks, large datasets, GPUs).
-- **No**: If you're using **JupyterHub** provided by the cluster, **you don't need to submit a job script**, as JupyterHub already manages resources for your notebook sessions.
+### **Step 8: Modify or Troubleshoot the Job Script (if needed)**
+
+If you need to modify the job script:
+1. Use `nano` or another text editor to reopen it:
+   ```bash
+   nano jupyter_job.sh
+   ```
+2. After making the necessary changes, save the file as described earlier and resubmit the job using `sbatch`.
+
+If the job fails, check the error output in the `jupyter_error.txt` file to debug any issues.
+
+---
+
+Here is the updated section on **Option 2: Using JupyterHub on the Cluster**, along with the correct URLs for Cedar and Narval:
+
+---
+
+### **Option 2: Using JupyterHub on the Cluster**
+
+If your cluster supports **JupyterHub**, you can run Jupyter Notebooks through a web interface, which simplifies the process. This approach automatically allocates resources for your notebook without the need to manually submit SLURM jobs.
+
+#### **Supported Clusters for JupyterHub:**
+- **[JupyterHub on Beluga](https://jupyterhub.beluga.alliancecan.ca)**
+- **[JupyterHub on Cedar](https://jupyterhub.cedar.computecanada.ca)**
+- **[JupyterHub on Narval](https://jupyterhub.narval.alliancecan.ca)**
+
+You can find general information about JupyterHub on clusters via the [Alliance Documentation](https://docs.alliancecan.ca/wiki/JupyterHub#JupyterHub_on_clusters).
+
+#### **Steps to Use JupyterHub**:
+
+1. **Access JupyterHub**:
+   - Open the JupyterHub URL for your cluster (see the links above).
+
+2. **Log in with Your Alliance Credentials**:
+   - Use your Digital Research Alliance of Canada credentials to log in.
+
+3. **Start a Notebook Session**:
+   - Once logged in, you'll be prompted to select resources (e.g., number of CPUs, memory, etc.). 
+   - After choosing the desired resources, start the notebook session.
+
+4. **Run Notebooks**:
+   - Jupyter notebooks can be run directly within the browser. If you need more resources (such as for machine learning tasks), you can allocate them in the session options.
+
+---
+
+This method is ideal for quick, interactive tasks. However, for more resource-intensive computations or longer-running tasks, refer to **Option 1** and submit your Jupyter Notebook as a SLURM job. 
+
+
 
 
